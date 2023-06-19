@@ -1,4 +1,5 @@
 const { exec } = require('../db/mysql');
+const xss = require('xss');
 
 const getList = (author, keyword) => {
   let sql = `select * from blogs where 1=1 `;
@@ -22,7 +23,8 @@ const getDetail = (id) => {
 
 const newBlog = (blogData = {}) => {
   // blogData是一个博客对象，包含title content属性
-  const { title, content, author } = blogData;
+  const title = xss(blogData.title);
+  const { content, author } = blogData;
   const createTime = Date.now();
   const sql = `insert into blogs (title,content,createtime,author) values ('${title}','${content}','${createTime}','${author}');`;
   return exec(sql).then((insertData) => {
